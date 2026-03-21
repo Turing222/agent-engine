@@ -1,0 +1,89 @@
+[project]
+name = "agent-engine"
+version = "0.1.0"
+description = "AI Agent 独立引擎工程"
+readme = "README.md"
+requires-python = "==3.12.*"
+dependencies = [
+    # ── 基础 Web 与配置层（与 mlops-project 保持严格一致）──
+    "fastapi~=0.128.0",
+    "uvicorn~=0.40.0",
+    "pydantic-settings~=2.12.0",
+
+    # ── Agent 核心框架组（使用 ~= 锁定当前主版本防跌落）──
+    "pydantic-ai~=0.1.0",
+    "langgraph~=0.3.0",
+    "mirascope~=1.0.0",
+
+    # ── MCP 与记忆持久层 ──
+    "mcp>=1.6.0",
+    "mem0ai~=1.0.0",
+    "aiosqlite~=0.20.0",
+
+    # ── 可观测性 ──
+    "logfire~=3.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.0.2",
+    "pytest-asyncio>=1.3.0",
+    "pytest-cov>=7.0.0",
+    "pytest-mock>=3.15.1",
+    "ruff>=0.15.2",
+    "ty>=0.0.18",
+]
+
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "B", "I", "UP"]
+ignore = ["E501"]
+exclude = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = [
+    "fastapi.Depends",
+    "fastapi.params.Depends",
+    "fastapi.Query",
+    "fastapi.Path",
+    "fastapi.Body",
+    "fastapi.Header",
+    "Depends",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+norecursedirs = ["data"]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ty.environment]
+python = ".venv"
+
+[tool.ty.rules]
+all = "warn"
+
+[tool.ty.src]
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "build",
+    "dist",
+    "tests"
+]
+
+[tool.ty.terminal]
+output-format = "full"
